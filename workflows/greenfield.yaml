@@ -1,0 +1,79 @@
+name: Greenfield
+description: Greenfield development workflow
+agent: claude
+progress_dir: greenfield-progress
+
+phases:
+  - name: Define
+    steps:
+      - name: Create Spec
+        skill: /gf-create-spec
+        type: think
+        outputs:
+          - spec.xml
+      - name: Save Progress
+        skill: /gf-save-progress
+        type: code
+        outputs:
+          - progress.txt
+
+  - name: Plan
+    steps:
+      - name: Resume
+        skill: /gf-resume
+        type: think
+      - name: Create Tasks
+        skill: /gf-create-tasks
+        type: think
+        outputs:
+          - tasks.json
+      - name: Save Progress
+        skill: /gf-save-progress
+        type: code
+        outputs:
+          - progress.txt
+
+  - name: Build
+    loop: true
+    steps:
+      - name: Resume
+        skill: /gf-resume
+        type: think
+        outputs:
+          - next-task.json
+      - name: Create Tests
+        skill: /gf-write-tests
+        type: code
+        skip_when:
+          file: next-task.json
+          field: needs_tests
+          equals: false
+      - name: Plan
+        skill: /gf-plan
+        type: think
+        skip_when:
+          file: next-task.json
+          field: approach
+          equals: direct
+      - name: Implement
+        skill: /gf-implement
+        type: code
+        permissions: code
+      - name: Review
+        skill: /review-implementation
+        type: think
+        outputs:
+          - review-confirmed
+      - name: Save Progress
+        skill: /gf-save-progress
+        type: code
+        outputs:
+          - progress.txt
+
+  - name: Wrap Up
+    steps:
+      - name: Testing Notes
+        skill: /gf-testing-notes
+        type: think
+        outputs:
+          - testing-notes.md

@@ -1,0 +1,27 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.DS_Store
+.!*!.DS_Store
+
+# Runtime state, signals, logs
+.aw/
+
+# Debug logs (legacy location)
+debug-*.log
+
+# Claude Code
+.claude/
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+
+# Environment
+.env
+.env.*

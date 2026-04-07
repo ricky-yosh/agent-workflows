@@ -1,0 +1,31 @@
+{
+  "name": "agentic-workflows",
+  "version": "0.1.0",
+  "description": "Orchestrate AI coding agents through multi-step workflows",
+  "type": "module",
+  "bin": {
+    "aw": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "docs": "node scripts/generate-docs.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.2.88",
+    "@openai/codex-sdk": "^0.117.0",
+    "ink": "^6.0.0",
+    "ink-select-input": "^6.0.0",
+    "js-yaml": "^4.1.0",
+    "marked": "^17.0.5",
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^3.0.0"
+  }
+}

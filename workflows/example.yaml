@@ -1,0 +1,84 @@
+name: Example
+description: Comprehensive test workflow exercising all TUI features
+agent: claude
+progress_dir: test-progress
+
+phases:
+  # Phase 1: Tests think/code types, skill reference, outputs for completion
+  # detection, code permissions, and downstream invalidation
+  - name: Setup
+    steps:
+      - name: Greet
+        type: think
+      - name: Create Spec
+        type: think
+        skill: /ex-create-spec
+        outputs:
+          - spec.md
+      - name: Configure
+        type: code
+        permissions: code
+
+  # Phase 2: Tests parallel execution — two consecutive parallel: true steps,
+  # each with its own output for independent completion detection via
+  # pollForOutputs (stop signals disabled during parallel runs)
+  - name: Research
+    steps:
+      - name: Research Codebase
+        type: think
+        parallel: true
+        outputs:
+          - research.md
+      - name: Create Design
+        type: think
+        parallel: true
+        outputs:
+          - design.md
+
+  # Phase 3: Tests loop phase, phase-level agent override (codex), skip_when
+  # conditional logic, auto permissions, task system (t key), input step
+  # (user-driven), command step (shell, no agent), skill references, and
+  # multi-output completion
+  - name: Build
+    agent: codex
+    loop: true
+    steps:
+      - name: Triage
+        type: think
+        skill: /ex-triage
+        outputs:
+          - next-task.json
+      - name: Write Tests
+        type: code
+        skip_when:
+          file: next-task.json
+          field: skipTests
+          equals: true
+        outputs:
+          - tests-written.json
+      - name: Implement
+        type: code
+        permissions: auto
+      - name: Verify
+        type: input
+      - name: Lint
+        command: echo "Lint passed"
+        type: code
+      - name: Save Progress
+        type: code
+        skill: /ex-save-progress
+        outputs:
+          - progress.json
+
+  # Phase 4: Tests fallback to workflow-default agent after a phase override,
+  # step-level agent override, command step, and final output for digest
+  - name: Done
+    steps:
+      - name: Diff Check
+        command: git diff --stat
+        type: code
+      - name: Wrap Up
+        type: think
+        agent: claude
+        outputs:
+          - summary.md

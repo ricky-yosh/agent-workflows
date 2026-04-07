@@ -1,0 +1,76 @@
+name: Brownfield
+description: Brownfield development with Claude Code skills
+progress_dir: brownfield-progress
+
+phases:
+  - name: Research & Spec
+    steps:
+      - name: Create Spec
+        skill: /bf-create-spec
+        type: think
+        outputs:
+          - spec.txt
+      - name: Research
+        skill: /bf-research
+        type: think
+        outputs:
+          - research.txt
+        clear: true
+
+  - name: Task Breakdown
+    steps:
+      - name: Resume
+        skill: /bf-resume
+        type: think
+      - name: Create Tasks
+        skill: /bf-create-tasks
+        type: think
+        outputs:
+          - tasks.json
+      - name: Save Progress
+        skill: /bf-save-progress
+        type: code
+        clear: true
+
+  - name: Implementation
+    loop: true
+    steps:
+      - name: Resume
+        skill: /bf-resume
+        type: think
+      - name: Triage
+        skill: /bf-triage
+        type: think
+        outputs:
+          - next-task.json
+        clear: true
+      - name: Create Tests
+        skill: /bf-create-tests
+        type: code
+        skip_when:
+          file: next-task.json
+          field: fast_track
+          equals: true
+      - name: Create Plan
+        skill: /bf-plan
+        type: think
+        skip_when:
+          file: next-task.json
+          field: fast_track
+          equals: true
+      - name: Implement
+        skill: /bf-implement
+        type: code
+        permissions: code
+        outputs:
+          - implementation-confirmed
+      - name: Save Progress
+        skill: /bf-save-progress
+        type: code
+        clear: true
+
+  - name: Handoff
+    steps:
+      - name: QA Notes
+        skill: /bf-qa-notes
+        type: think
