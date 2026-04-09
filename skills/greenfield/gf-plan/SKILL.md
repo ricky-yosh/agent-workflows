@@ -1,12 +1,12 @@
 ---
 name: gf-plan
-description: "Collaboratively create an implementation plan for a batch of tasks. Works back and forth with the user through open questions and outline before entering Plan mode. Part of the gf (greenfield) skill family."
+description: "Automatically create an implementation plan for a batch of tasks. Makes decisions, states rationale, and enters Plan mode immediately. Part of the gf (greenfield) skill family."
 model: opus
 ---
 
 # Create Plan (Long Feature)
 
-Enter Plan mode for a batch of tasks.
+Enter Plan mode for a batch of tasks — automatically, without asking questions first.
 
 ## Steps
 
@@ -21,27 +21,28 @@ Enter Plan mode for a batch of tasks.
 
    **Scope constraint:** Plan ONLY for the identified task(s). Do not outline, summarize, or propose approaches for other tasks in tasks.json. They exist but are irrelevant to this plan.
 
-3. **Work back and forth with the user starting with your open questions and outline before writing a plan.**
+3. **Explore existing code.** Read the actual files relevant to this task — understand what patterns are already in use, what files will be touched, and how things connect. Don't plan in the abstract.
 
-   Start by presenting your open questions — things you need to understand before you can write a useful plan. **All questions must be scoped to the identified task only.** These might include:
-   - How should this component interact with what's already built?
-   - Are there any established patterns that need clarifying for this specific task?
-   - Any preferences on libraries or approaches for this piece?
-   - Anything you've been thinking about that isn't in the spec?
+4. **Make decisions and enter Plan mode immediately.** Do NOT ask the user questions. Instead:
+   - Choose the simplest approach consistent with the spec and existing patterns
+   - For any ambiguous design point, pick an option and state your rationale inline (one sentence)
+   - Go directly to Plan mode with a complete, grounded plan
 
-   Do not ask questions about or reference future tasks unless they create a hard constraint on the current task.
-
-   Then propose a rough outline of the plan. Go back and forth until the approach is clear.
-
-4. **Explore existing code if applicable.** If prior tasks have been completed, read the actual files to understand what's already built. Don't plan in the abstract — ground the plan in real code.
-
-5. **Enter Plan mode** with all this context loaded. The plan covers only the identified task(s) — it should be detailed enough to implement without referencing other tasks. The plan should:
+   The plan covers only the identified task(s) and must be detailed enough to implement without referencing other tasks. It should:
    - Reference established patterns from the existing codebase
    - List what files to create and what existing files to modify
    - Describe how each piece connects to what's already built
    - Call out anything that should NOT be done (patterns to avoid)
+   - End with a **How to test** checklist (see below)
 
-6. Iterate with the user in Plan mode until they approve the plan.
+5. After presenting the plan, use `AskUserQuestion` with two options:
+   ```
+   question: "Ready to implement, or want to adjust the plan?"
+   options:
+     - "Looks good — implement it"
+     - "Change something: ___"
+   ```
+   If the user wants a change, revise and re-present. Otherwise, proceed.
 
 ## What the plan should look like
 
@@ -88,6 +89,6 @@ Example:
 
 ## Principles
 
-- **The user's mental model matters most.** The back-and-forth exists to surface what the user is thinking. Don't rush to write a plan — understand their intent first.
+- **Decide, don't ask.** The spec exists so the user doesn't have to re-explain intent. Make the call, show the reasoning, move on.
 - **Ground in reality.** Reference actual files and actual patterns, not abstract ideas.
 - **Plan, not spec.** This is *how* to implement, not *what* to implement. The spec already covers what.
