@@ -11,6 +11,7 @@ phases:
         type: think
         outputs:
           - spec.xml
+        timeout_ms: 1800000
       - name: Save Progress
         skill: /gf-save-progress
         type: code
@@ -27,6 +28,7 @@ phases:
         type: think
         outputs:
           - tasks.json
+        timeout_ms: 1800000
       - name: Save Progress
         skill: /gf-save-progress
         type: code
@@ -60,10 +62,11 @@ phases:
         type: code
         permissions: code
       - name: Review
-        skill: /review-implementation
+        skill: /gf-review
         type: think
         outputs:
           - review-confirmed
+        timeout_ms: 1800000
       - name: Save Progress
         skill: /gf-save-progress
         type: code
