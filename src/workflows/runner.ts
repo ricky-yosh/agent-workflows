@@ -160,6 +160,7 @@ export async function runStep(step: WorkflowStep, opts: RunStepOpts): Promise<St
     cwd: opts.cwd,
     outputs: step.outputs,
     progressDir: opts.progressDir,
+    timeout: step.timeout_ms,
   });
 
   // Give session ID capture a brief moment if it hasn't resolved yet,

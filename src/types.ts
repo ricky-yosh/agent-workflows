@@ -25,6 +25,8 @@ export interface WorkflowStep {
   command?: string;
   /** Skip this step when a condition from a prior step's output is met. */
   skip_when?: SkipWhen;
+  /** Override the default 5-minute timeout (ms). Use for steps with user interaction. */
+  timeout_ms?: number;
 }
 
 export interface Workflow {
