@@ -1,12 +1,12 @@
 ---
 name: gf-plan
-description: "Automatically create an implementation plan for a batch of tasks. Makes decisions, states rationale, and enters Plan mode immediately. Part of the gf (greenfield) skill family."
+description: "Research the task, form a recommended approach, ask the user to confirm or redirect via AskUserQuestion, then enter Plan mode. Part of the gf (greenfield) skill family."
 model: opus
 ---
 
-# Create Plan (Long Feature)
+# Create Plan (Greenfield)
 
-Enter Plan mode for a batch of tasks — automatically, without asking questions first.
+Research the task, surface a recommended approach, confirm with the user, then enter Plan mode.
 
 ## Steps
 
@@ -19,23 +19,33 @@ Enter Plan mode for a batch of tasks — automatically, without asking questions
 
 2. **Identify the task scope.** Read `.aw/greenfield-progress/next-task.json` — if it exists, default to the task listed there (written by `/gf-resume`). If `next-task.json` doesn't exist, fall back to the first not-done task in tasks.json. The user can request multiple (e.g., "tasks 3-4"), but the default is one.
 
-   **Scope constraint:** Plan ONLY for the identified task(s). Do not outline, summarize, or propose approaches for other tasks in tasks.json. They exist but are irrelevant to this plan.
+   **Scope constraint:** Plan ONLY for the identified task(s). Do not outline, summarize, or propose approaches for other tasks in tasks.json.
 
-3. **Explore existing code.** Read the actual files relevant to this task — understand what patterns are already in use, what files will be touched, and how things connect. Don't plan in the abstract.
+3. **Research the codebase.** Read the actual files relevant to this task — understand what patterns are already in use, what files will be touched, and how things connect. Look for:
+   - Existing patterns this task should follow
+   - Potential approaches and their tradeoffs
+   - Any constraints or risks the spec doesn't spell out
 
-4. **Make decisions and enter Plan mode immediately.** Do NOT ask the user questions. Instead:
-   - Choose the simplest approach consistent with the spec and existing patterns
-   - For any ambiguous design point, pick an option and state your rationale inline (one sentence)
-   - Go directly to Plan mode with a complete, grounded plan
+4. **Form a recommendation.** Based on your research, identify the simplest approach consistent with the spec and existing patterns. Note the rationale in one sentence. If there's a meaningful alternative worth surfacing, note that too.
 
-   The plan covers only the identified task(s) and must be detailed enough to implement without referencing other tasks. It should:
+5. **Ask the user to confirm the approach** using `AskUserQuestion`:
+   ```
+   question: "Recommended approach for Task N: <one-sentence summary>. Proceed?"
+   options:
+     - "Yes — plan it"
+     - "Different approach: ___"
+   ```
+   - The recommended option should come first so the user can accept with a single keypress.
+   - If the user picks a different approach, note it and use it in the plan.
+
+6. **Enter Plan mode** with a complete, grounded plan for the confirmed approach. The plan covers only the identified task(s) and must be detailed enough to implement without referencing other tasks. It should:
    - Reference established patterns from the existing codebase
    - List what files to create and what existing files to modify
    - Describe how each piece connects to what's already built
    - Call out anything that should NOT be done (patterns to avoid)
    - End with a **How to test** checklist (see below)
 
-5. After presenting the plan, use `AskUserQuestion` with two options:
+7. After presenting the plan, use `AskUserQuestion`:
    ```
    question: "Ready to implement, or want to adjust the plan?"
    options:
@@ -89,6 +99,7 @@ Example:
 
 ## Principles
 
-- **Decide, don't ask.** The spec exists so the user doesn't have to re-explain intent. Make the call, show the reasoning, move on.
+- **Research, then recommend.** Don't ask open-ended questions — explore the code first, form a view, and present it as the default option.
+- **One keypress to proceed.** The recommended approach is always the first option so the user can confirm without typing.
 - **Ground in reality.** Reference actual files and actual patterns, not abstract ideas.
 - **Plan, not spec.** This is *how* to implement, not *what* to implement. The spec already covers what.
