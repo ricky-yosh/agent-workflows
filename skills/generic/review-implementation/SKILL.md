@@ -10,7 +10,7 @@ Gate the workflow on user verification after an implementation step.
 
 ## Steps
 
-1. Find the active progress directory by checking which of `.aw/brownfield-progress/next-task.json` or `.aw/greenfield-progress/next-task.json` exists. Read it to get the current task ID (the `id` field).
+1. Find the active progress directory by checking which of `.aw/brownfield-progress/next-task.json` or `.aw/greenfield-progress/next-task.json` exists. Read it to get the current task ID (the `task` field).
 
 2. Read the implementation digest at `.aw/digests/implement-task-N-digest.md` (where N is the task ID).
 
@@ -26,6 +26,6 @@ Gate the workflow on user verification after an implementation step.
        - "Something's off — I'll explain: ___"
    ```
 
-5. **If "Task completed and tested":** Write an empty file to the progress directory at `review-confirmed`. This signals step completion to the runner.
+5. **If "Task completed and tested":** Write an empty file to the progress directory at `review-confirmed`. Then write an empty file to `.aw/stop-signal` to notify the runner immediately.
 
 6. **If "Something's off":** Read the user's explanation. Do NOT write `review-confirmed`. Tell the user the step will stay incomplete so they can re-run Execute Plan or fix the issue manually, then re-run this Review step.
