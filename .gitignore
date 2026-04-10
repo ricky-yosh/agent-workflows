@@ -12,6 +12,7 @@ debug-*.log
 
 # Claude Code
 .claude/
+.codex/
 
 # Editor / IDE
 .vscode/
